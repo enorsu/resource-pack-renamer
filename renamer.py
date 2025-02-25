@@ -1,7 +1,11 @@
 import glob
 import os
 import json
+import pathlib
 
+
+global username
+username = os.getlogin()
 
 def save_backup(
 firstentrylist,
@@ -19,17 +23,16 @@ filename = "backup.json"
     return
 
 def load_backup(
-path = "./",
-filename = "backup.json",
+path = "./backup.json",
 skipConfirmation = False
 ):
-    with open(f"{path}{filename}") as j:
+    with open(f"{path}") as j:
         loaded_backup = j.read()
         loaded_backup = json.loads(loaded_backup)
 
     
 
-    print(f"Backup successfully loaded from {path + filename}")
+    print(f"Backup successfully loaded from {path}")
 
     if not skipConfirmation:
         if input("Do you want to restore the backup?[y/N]\n").lower() != "y":
@@ -80,9 +83,8 @@ file_extension = "*.zip"
 
     log(f"Blacklisted_files len: {len(blacklisted_files)}")
     if not skipConfirmation:
-        if input("Continue replacing files? (this is supposed to be a completely reversible action?)[y/N]\n").lower() != "y":
+        if input("Replace files? (this is supposed to be a completely reversible action?)[y/N]\n").lower() != "y":
             exit()
-        print("\n" * 3)
         if input("Are you really sure? Type 'I am sure' here to continue\n") != "I am sure":
             exit()
 
@@ -102,5 +104,47 @@ def rename(blacklisted_files, cleaned_filenames, logging=True):
             print(command)
         os.system(command)
 
-#get_files_and_rename()
-load_backup()
+def main_cli_ui():
+    print("""
+[resource-pack-renamer]
+What do you want to do?
+[R] Rename your resource packs to be loaded properly
+[B] Load a backup from [R]
+""")
+    selection = input(">")
+    if selection.upper() == "R":
+        r_cli_ui()
+    elif selection.upper() == "B":
+        b_cli_ui()
+
+def file_path_input(text, func):
+    path = input(text)
+    if not pathlib.Path(path).exists():
+        print("invalid path")
+        func()
+    return path
+
+
+def b_cli_ui():
+    print("")
+    s = input("Would you like to use the default path?(./backup.json)")
+    if s.lower().startswith("y"):
+        path = file_path_input("Enter your custom path: ")
+    
+    load_backup()
+    
+
+
+
+def r_cli_ui():
+    if input("Do you wish to use simple mode? ").lower().startswith("y"):
+        path_thing =  input(f"Path has been set to /home/{username}/.minecraft/resourcepacks. Do you wish to change it? ")
+        if path_thing.lower().startswith("y"):
+            path = file_path_input()
+        else:
+            path = "/home/{username}/.minecraft/resourcepacks"
+            get_files_and_rename()
+        
+
+
+main_cli_ui()
