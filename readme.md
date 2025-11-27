@@ -1,3 +1,3 @@
-# Resource pack renamer
+# resource_pack_renamer
 
-This is essentially a bugfix for those that play competitive versions of Minecraft and encounter a "bug" that doesn't let MC load a resource pack that has a special character in its filename.(and are way too lazy to manually rename a bunch of packs)
+A simple application written in V to remove select characters from filenames.

@@ -26,7 +26,7 @@ fn main() {
         println("a file path is required.")
         return
     }
-    // loop through all the files in the path
+    // loop through all the files in the provided location
     for mut file in os.ls(path) or { [] } {
         oldfile := file
         // remove blacklisted stuffs
