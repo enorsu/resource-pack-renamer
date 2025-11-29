@@ -4,7 +4,7 @@ import os
 import flag
 
 fn stat(current int, max int) string {
-    return "[${current}/${max}]"
+    return "[${current}/${max}] "
 }
 
 fn main() {
@@ -72,10 +72,10 @@ fn main() {
             os.mv("${path}/${oldfile}", "${path}/${file}")!
 
             // print information
-            println(stat(i, files.len) + " " + oldfile + " -> " + file)
+            println(stat(i, files.len) + oldfile + " -> " + file)
 
         } else {
-            println("${stat(i, files.len)} nothing to do")
+            println("${stat(i, files.len)}nothing to do")
         }
 
 
