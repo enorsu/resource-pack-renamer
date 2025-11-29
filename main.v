@@ -8,6 +8,7 @@ fn stat(current int, max int) string {
 }
 
 fn main() {
+    
     // define blacklisted letters
     mut blacklist := ["[", "]", "(", ")", "!", "§", "¡", "&"]   
 
