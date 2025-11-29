@@ -3,12 +3,15 @@ module main
 import os
 import flag
 
+// source https://github.com/enorsu/resource-pack-renamer.git
+// feel free to distribute and modify
+
 fn stat(current int, max int) string {
     return "[${current}/${max}] "
 }
 
 fn main() {
-    
+
     // define blacklisted letters
     mut blacklist := ["[", "]", "(", ")", "!", "§", "¡", "&"]   
 
@@ -76,6 +79,7 @@ fn main() {
             println(stat(i, files.len) + oldfile + " -> " + file)
 
         } else {
+            // nothing to do
             println("${stat(i, files.len)}nothing to do")
         }
 
