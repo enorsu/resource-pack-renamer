@@ -3,6 +3,10 @@ module main
 import os
 import flag
 
+fn stat(current int, max int) string {
+    return "[${current}/${max}]"
+}
+
 fn main() {
     // define blacklisted letters
     mut blacklist := ["[", "]", "(", ")", "!", "§", "¡", "&"]   
@@ -28,7 +32,7 @@ fn main() {
             "--override, -o": "override list of chars"
         }
         for key, val in info {
-            println("${key}  <->  ${val}")
+            println("${key}     ${val}")
         }
         return
     }
@@ -45,7 +49,14 @@ fn main() {
         blacklist = override.split("")
     }
     // loop through all the files in the provided location
-    for mut file in os.ls(path) or { [] } {
+    mut files := os.ls(path) or { [] }
+
+    // counter variable
+    mut i := 0
+
+    for mut file in files {
+        // increment by one
+        i = i + 1
 
         oldfile := file
         // loop through the blacklisted chars
@@ -61,11 +72,13 @@ fn main() {
             os.mv("${path}/${oldfile}", "${path}/${file}")!
 
             // print information
-            println(oldfile + " -> " + file)
+            println(stat(i, files.len) + " " + oldfile + " -> " + file)
 
         } else {
-            println("nothing to do")
+            println("${stat(i, files.len)} nothing to do")
         }
+
+
 
         
     }
