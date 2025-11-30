@@ -2,12 +2,59 @@ module main
 
 import os
 import flag
+import time
 
 // source https://github.com/enorsu/resource-pack-renamer.git
 // feel free to distribute and modify
 
 fn stat(current int, max int) string {
 	return '[${current}/${max}] '
+}
+
+fn generate_summary(duration i64, total int, proc int) []string {
+	return [
+		'',
+		'SUMMARY:',
+		'Processed ${proc} out of the total ${total} files',
+		'Process took ${duration}ms',
+	]
+}
+
+// renaming function
+fn rename(blacklist []string, mut files []string, path string) (i64, int, int) {
+	// woooo profiling
+	sw := time.new_stopwatch()
+
+	// counter variable
+	mut i := 0
+
+	// processed files counter
+	mut processed_count := 0
+
+	for mut file in files {
+		// increment by one
+		i = i + 1
+
+		oldfile := file
+		// loop through the blacklisted chars
+		for item in blacklist {
+			// remove char
+			file = file.replace(item, '')
+		}
+		// check if they are equal, so we don't waste no memory
+		if oldfile != file {
+			// rename(move) the old file
+			os.mv('${path}/${oldfile}', '${path}/${file}') or {}
+
+			// print information
+			println(stat(i, files.len) + oldfile + ' -> ' + file)
+			i += 1
+		} else {
+			// nothing to do
+			println('${stat(i, files.len)}nothing to do')
+		}
+	}
+	return sw.elapsed().milliseconds(), files.len, processed_count
 }
 
 fn main() {
@@ -53,29 +100,9 @@ fn main() {
 	// loop through all the files in the provided location
 	mut files := os.ls(path) or { [] }
 
-	// counter variable
-	mut i := 0
-
-	for mut file in files {
-		// increment by one
-		i = i + 1
-
-		oldfile := file
-		// loop through the blacklisted chars
-		for item in blacklist {
-			// remove char
-			file = file.replace(item, '')
-		}
-		// check if they are equal, so we don't waste no memory
-		if oldfile != file {
-			// rename(move) the old file
-			os.mv('${path}/${oldfile}', '${path}/${file}')!
-
-			// print information
-			println(stat(i, files.len) + oldfile + ' -> ' + file)
-		} else {
-			// nothing to do
-			println('${stat(i, files.len)}nothing to do')
-		}
+	duration, total, count := rename(blacklist, mut files, path)
+	for item in generate_summary(duration, total, count) {
+		println(item)
+		println('-'.repeat(item.len))
 	}
 }
