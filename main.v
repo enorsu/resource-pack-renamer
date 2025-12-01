@@ -104,5 +104,6 @@ fn main() {
 	for item in generate_summary(duration, total, count) {
 		println(item)
 		println('-'.repeat(item.len))
+
 	}
 }
